@@ -1,21 +1,27 @@
 package controller;
 
 import model.Livro;
-import java.util.*;
-import java.util.stream.Collectors;
 import model.PreCarga;
+import model.Bibliotecavel;
+
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.Map;
 
 public class LivroController {
     private int proximoId = 1;
     private Map<Integer, Livro> livros = new HashMap<>();
 
-    public void cadastrarLivro(String titulo, String autor, String categoria, int exemplares, int anoPublicacao) {
+    public Livro cadastrarLivro(String titulo, String autor, String categoria, int exemplares, int anoPublicacao) {
         Livro livro = new Livro(titulo, autor, categoria, exemplares, anoPublicacao);
         livro.setId(proximoId);
         livros.put(proximoId, livro);
-        System.out.println("✅ Livro cadastrado com ID: " + proximoId);
         proximoId++;
+        return livro;
     }
+    
 
     public LivroController() {
         PreCarga.carregarLivros(this);
@@ -25,7 +31,7 @@ public class LivroController {
         return livros.values();
     }
 
-    public List<Livro> pesquisarPor(String termo, String tipo) {
+    public List<String> pesquisarPor(String termo, String tipo) {
         return livros.values().stream()
             .filter(l -> switch(tipo) {
                 case "id" -> Integer.toString(l.getId()).equals(termo);
@@ -34,6 +40,7 @@ public class LivroController {
                 case "categoria" -> l.getCategoria().equalsIgnoreCase(termo);
                 default -> false;
             })
+            .map(Bibliotecavel::getDescricao)
             .collect(Collectors.toList());
     }
 

@@ -84,8 +84,8 @@ public class BibliotecaView {
         int exemplares = Integer.parseInt(sc.nextLine());
         System.out.print("Ano de Publicação: ");
         int ano = Integer.parseInt(sc.nextLine());
-        ctrl.cadastrarLivro( titulo, autor, categoria, exemplares, ano);
-        System.out.println("Livro cadastrado.");
+        Livro livroCadastrado = ctrl.cadastrarLivro(titulo, autor, categoria, exemplares, ano);
+        System.out.println("Livro cadastrado com ID: " + livroCadastrado.getId());
     }
 
     private static void pesquisarLivro(Scanner sc, LivroController ctrl) {
@@ -93,7 +93,7 @@ public class BibliotecaView {
         String tipo = sc.nextLine();
         System.out.print("Termo: ");
         String termo = sc.nextLine();
-        List<Livro> encontrados = ctrl.pesquisarPor(termo, tipo);
+        List<String> encontrados = ctrl.pesquisarPor(termo, tipo);
         if (encontrados.isEmpty()) System.out.println("Nenhum livro encontrado.");
         else encontrados.forEach(System.out::println);
     }
@@ -133,7 +133,7 @@ public class BibliotecaView {
         int usuarioId = Integer.parseInt(sc.nextLine());
         Livro livro = lCtrl.getLivro(livroId);
         Usuario usuario = uCtrl.getUsuario(usuarioId);
-        System.out.println(eCtrl.registrarEmprestimo(livro, usuario));
+        System.out.println(eCtrl.registrarEmprestimo(livro, usuario, null));
     }
     
 

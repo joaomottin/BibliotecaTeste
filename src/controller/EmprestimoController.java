@@ -10,7 +10,7 @@ import java.util.*;
 public class EmprestimoController {
     private final List<Emprestimo> emprestimos = new ArrayList<>();
 
-    public String registrarEmprestimo(Livro livro, Usuario usuario) {
+    public String registrarEmprestimo(Livro livro, Usuario usuario, LocalDate dataAntiga) {
         if (livro == null || usuario == null) return "Livro ou usuário não encontrado.";
         if (livro.getExemplares() <= 0) return "Sem exemplares disponíveis.";
         if (!usuario.getEmprestimos().isEmpty()) return "Usuário já possui empréstimo ativo.";

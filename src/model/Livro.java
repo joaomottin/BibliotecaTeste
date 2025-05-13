@@ -37,6 +37,6 @@ public class Livro implements Bibliotecavel {
 
     @Override
     public String getDescricao() {
-        return toString();
+        return "O livro " + titulo + " de " + autor + ", foi publicado no ano de " + anoPublicacao + ", sendo uma clássica refencia da categoria de " + categoria;
     }
 }

@@ -11,11 +11,17 @@ public class Emprestimo {
     private final LocalDate dataDevolucaoPrevista;
     private LocalDate dataDevolucao;
 
+    // Construtor principal: usa data atual
     public Emprestimo(Livro livro, Usuario usuario) {
+        this(livro, usuario, LocalDate.now());
+    }
+
+    // Construtor de teste: recebe dataEmprestimo customizada
+    public Emprestimo(Livro livro, Usuario usuario, LocalDate dataEmprestimo) {
         this.id = contador++;
         this.livro = livro;
         this.usuario = usuario;
-        this.dataEmprestimo = LocalDate.now();
+        this.dataEmprestimo = dataEmprestimo;
         this.dataDevolucaoPrevista = dataEmprestimo.plusDays(14);
         this.dataDevolucao = null;
     }
@@ -33,13 +39,14 @@ public class Emprestimo {
 
     @Override
     public String toString() {
-        return String.format("Empréstimo #%d - Livro: %s | Usuário: %s | Data: %s | Previsto: %s | Devolvido: %s",
+        return String.format(
+            "Empréstimo #%d - Livro: %s | Usuário: %s | Data: %s | Previsto: %s | Devolvido: %s",
             id,
             livro.getTitulo(),
             usuario.getNome(),
             dataEmprestimo,
             dataDevolucaoPrevista,
-            dataDevolucao != null ? dataDevolucao : "Pendente"
+            (dataDevolucao != null ? dataDevolucao : "Pendente")
         );
     }
 }
