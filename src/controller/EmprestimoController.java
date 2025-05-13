@@ -2,49 +2,63 @@ package controller;
 
 import model.Emprestimo;
 import model.Livro;
+import model.PreCarga;
 import model.Usuario;
 
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class EmprestimoController {
     private final List<Emprestimo> emprestimos = new ArrayList<>();
 
-    public String registrarEmprestimo(Livro livro, Usuario usuario, LocalDate dataAntiga) {
+    public EmprestimoController(UsuarioController uc, LivroController lc) {
+        PreCarga.carregarEmprestimos(this, uc, lc);
+    }
+
+    public String registrarEmprestimo(Livro livro, Usuario usuario, LocalDate dataEmprestimo) {
         if (livro == null || usuario == null) return "Livro ou usuário não encontrado.";
         if (livro.getExemplares() <= 0) return "Sem exemplares disponíveis.";
-        if (!usuario.getEmprestimos().isEmpty()) return "Usuário já possui empréstimo ativo.";
-
-        Emprestimo e = new Emprestimo(livro, usuario);
+        for (Emprestimo e : emprestimos) {
+            if (e.getUsuario().equals(usuario) && e.getDataDevolucao() == null) {
+                return "Usuário já possui empréstimo ativo.";
+            }
+        }
+        Emprestimo e;
+        if (dataEmprestimo != null) {
+            e = new Emprestimo(livro, usuario, dataEmprestimo);
+        } else {
+            e = new Emprestimo(livro, usuario);
+        }
         emprestimos.add(e);
         livro.setExemplares(livro.getExemplares() - 1);
         usuario.getEmprestimos().add(e);
         return "Empréstimo realizado com sucesso. ID: " + e.getId();
     }
 
+    public String registrarEmprestimo(Livro livro, Usuario usuario) {
+        return registrarEmprestimo(livro, usuario, null);
+    }
+
     public String registrarDevolucao(int emprestimoId) {
-        Optional<Emprestimo> opt = emprestimos.stream()
-                .filter(e -> e.getId() == emprestimoId && e.getDataDevolucao() == null)
-                .findFirst();
-        if (opt.isEmpty()) return "Empréstimo não encontrado ou já devolvido.";
-        Emprestimo e = opt.get();
-        e.registrarDevolucao();
-        e.getLivro().setExemplares(e.getLivro().getExemplares() + 1);
-        return "Devolução registrada.";
+        for (Emprestimo e : emprestimos) {
+            if (e.getId() == emprestimoId && e.getDataDevolucao() == null) {
+                e.registrarDevolucao();
+                e.getLivro().setExemplares(e.getLivro().getExemplares() + 1);
+                return "Devolução registrada.";
+            }
+        }
+        return "Empréstimo não encontrado ou já devolvido.";
     }
 
     public List<Emprestimo> listarEmprestimos() {
-        return emprestimos;
+        return List.copyOf(emprestimos);
     }
 
-    public List<Emprestimo> listarEmprestimosPorUsuario(int usuarioId) {
-        List<Emprestimo> resultado = new ArrayList<>();
-        for (Emprestimo e : emprestimos) {
-            if (e.getUsuario().getId() == usuarioId) {
-                resultado.add(e);
-            }
-        }
-        return resultado;
+        public List<Emprestimo> listarEmprestimosOrdemAlfabetica() {
+        return emprestimos.stream()
+                .sorted(Comparator.comparing(e -> e.getLivro().getTitulo()))
+                .collect(Collectors.toList());
     }
 
     public List<Emprestimo> listarEmprestimosAtivos() {
@@ -59,14 +73,12 @@ public class EmprestimoController {
 
     public List<Usuario> listarUsuariosComAtraso(int diasLimite) {
         List<Usuario> atrasados = new ArrayList<>();
-        LocalDate limite = LocalDate.now().minusDays(diasLimite);
-
+        LocalDate hoje = LocalDate.now();
         for (Emprestimo e : emprestimos) {
-            if (e.getDataDevolucao() == null && e.getDataEmprestimo().isBefore(limite)) {
+            if (e.getDataDevolucao() == null &&
+                e.getDataDevolucaoPrevista().isBefore(hoje.minusDays(diasLimite))) {
                 Usuario u = e.getUsuario();
-                if (!atrasados.contains(u)) {
-                    atrasados.add(u);
-                }
+                if (!atrasados.contains(u)) atrasados.add(u);
             }
         }
         return atrasados;
@@ -76,11 +88,10 @@ public class EmprestimoController {
         Map<Livro, Integer> contagem = new HashMap<>();
         for (Emprestimo e : emprestimos) {
             Livro livro = e.getLivro();
-            contagem.put(livro, contagem.getOrDefault(livro, 0) + 1);
+            contagem.merge(livro, 1, Integer::sum);
         }
-
         List<Map.Entry<Livro, Integer>> lista = new ArrayList<>(contagem.entrySet());
-        lista.sort((a, b) -> b.getValue() - a.getValue());
+        lista.sort((a, b) -> b.getValue().compareTo(a.getValue()));
         return lista;
     }
 }

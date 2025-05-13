@@ -5,6 +5,7 @@ import controller.LivroController;
 import controller.UsuarioController;
 import controller.FuncionarioController;
 import controller.EmprestimoController;
+import model.PreCarga;
 import model.Funcionario;
 import model.Livro;
 import model.Usuario;
@@ -17,26 +18,27 @@ public class BibliotecaView {
         LivroController livroCtrl = new LivroController();
         UsuarioController usuarioCtrl = new UsuarioController();
         FuncionarioController funcionarioCtrl = new FuncionarioController();
-        EmprestimoController emprestimoCtrl = new EmprestimoController();
+        EmprestimoController emprestimoCtrl = new EmprestimoController(usuarioCtrl, livroCtrl);
 
         Scanner scanner = new Scanner(System.in);
         int opcao;
 
         do {
             System.out.println("\n=== SISTEMA DE BIBLIOTECA ===");
-            System.out.println("1. Cadastrar Livro");
-            System.out.println("2. Listar Livros");
-            System.out.println("3. Pesquisar Livro");
-            System.out.println("4. Cadastrar Usuário");
-            System.out.println("5. Listar Usuários");
-            System.out.println("6. Cadastrar Funcionário");
-            System.out.println("7. Listar Funcionários");
-            System.out.println("8. Registrar Empréstimo");
-            System.out.println("9. Registrar Devolução");
-            System.out.println("10. Listar Empréstimos");
-            System.out.println("11. Relatório: Livros emprestados atualmente");
-            System.out.println("12. Relatório: Usuários com devolução em atraso");
-            System.out.println("13. Relatório: Livros mais populares");
+            System.out.println("1. Cadastrar livro");
+            System.out.println("2. Listar livros");
+            System.out.println("3. Pesquisar livro");
+            System.out.println("4. Cadastrar usuário");
+            System.out.println("5. Listar usuários");
+            System.out.println("6. Cadastrar funcionário");
+            System.out.println("7. Listar funcionários");
+            System.out.println("8. Registrar empréstimo");
+            System.out.println("9. Registrar devolução");
+            System.out.println("10. Listar todos empréstimos");
+            System.out.println("11. Listar todos empréstimos (em ordem alfabética de titulo)");
+            System.out.println("12. Livros emprestados atualmente");
+            System.out.println("13. Usuários com devolução em atraso");
+            System.out.println("14. Livros mais populares");
             System.out.println("0. Sair");
             System.out.print("Opção: ");
 
@@ -53,13 +55,14 @@ public class BibliotecaView {
                 case 8 -> registrarEmprestimo(scanner, livroCtrl, usuarioCtrl, emprestimoCtrl);
                 case 9 -> registrarDevolucao(scanner, emprestimoCtrl);
                 case 10 -> emprestimoCtrl.listarEmprestimos().forEach(System.out::println);
-                case 11 -> emprestimoCtrl.listarEmprestimosAtivos().forEach(System.out::println);
-                case 12 -> {
+                case 11 -> emprestimoCtrl.listarEmprestimosOrdemAlfabetica().forEach(System.out::println);
+                case 12 -> emprestimoCtrl.listarEmprestimosAtivos().forEach(System.out::println);
+                case 13 -> {
                     var atrasados = emprestimoCtrl.listarUsuariosComAtraso(7);
                     if (atrasados.isEmpty()) System.out.println("Nenhum usuário com atraso.");
                     else atrasados.forEach(System.out::println);
                 }
-                case 13 -> {
+                case 14 -> {
                     var populares = emprestimoCtrl.livrosMaisPopulares();
                     if (populares.isEmpty()) System.out.println("Nenhum empréstimo registrado.");
                     else populares.forEach(e ->
