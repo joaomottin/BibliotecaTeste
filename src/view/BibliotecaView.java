@@ -5,7 +5,6 @@ import controller.LivroController;
 import controller.UsuarioController;
 import controller.FuncionarioController;
 import controller.EmprestimoController;
-import model.PreCarga;
 import model.Funcionario;
 import model.Livro;
 import model.Usuario;
@@ -35,7 +34,7 @@ public class BibliotecaView {
             System.out.println("8. Registrar empréstimo");
             System.out.println("9. Registrar devolução");
             System.out.println("10. Listar todos empréstimos");
-            System.out.println("11. Listar todos empréstimos (em ordem alfabética de titulo)");
+            System.out.println("11. Listar todos empréstimos(Ordem alfabética)");
             System.out.println("12. Livros emprestados atualmente");
             System.out.println("13. Usuários com devolução em atraso");
             System.out.println("14. Livros mais populares");

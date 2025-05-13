@@ -57,7 +57,7 @@ public class EmprestimoController {
 
         public List<Emprestimo> listarEmprestimosOrdemAlfabetica() {
         return emprestimos.stream()
-                .sorted(Comparator.comparing(e -> e.getLivro().getTitulo()))
+                .sorted(Comparator.comparing(e -> e.getLivro().getTitulo().toLowerCase()))
                 .collect(Collectors.toList());
     }
 
