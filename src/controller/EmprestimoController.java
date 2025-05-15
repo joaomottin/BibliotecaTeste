@@ -67,15 +67,18 @@ public class EmprestimoController {
                 .collect(Collectors.toList());
     }
 
-    public List<Emprestimo> listarEmprestimosAtivos() {
-        List<Emprestimo> ativos = new ArrayList<>();
-        for (Emprestimo e : emprestimos) {
-            if (e.getDataDevolucao() == null) {
-                ativos.add(e);
-            }
+public List<Emprestimo> listarUltimosDoisEmprestimosAtivos() {
+    List<Emprestimo> ativos = new ArrayList<>();
+    for (int i = emprestimos.size() - 1; i >= 0 && ativos.size() < 2; i--) {
+        Emprestimo e = emprestimos.get(i);
+        if (e.getDataDevolucao() == null) {
+            ativos.add(e);
         }
-        return ativos;
     }
+    Collections.reverse(ativos);
+    return ativos;
+}
+
 
     public List<Emprestimo> listarEmprestimosComAtraso() {
         return emprestimos.stream()

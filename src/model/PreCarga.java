@@ -31,7 +31,7 @@ public class PreCarga {
         Usuario luciana = uc.listarUsuarios().stream().filter(u -> "Luciana".equals(u.getNome())).findFirst().orElse(null);
         Livro livro1 = lc.listarLivros().stream().filter(l -> "1984".equals(l.getTitulo())).findFirst().orElse(null);
         Livro livro2 = lc.listarLivros().stream().filter(l -> "O Senhor dos Anéis".equals(l.getTitulo())).findFirst().orElse(null);
-        if (carlos != null && livro1 != null) {ec.registrarEmprestimo(livro1, carlos, LocalDate.of(2025, 4, 1));}
-        if (luciana != null && livro2 != null) {ec.registrarEmprestimo(livro2, luciana, LocalDate.of(2025, 3, 20));}
+        if (carlos != null && livro1 != null) {ec.registrarEmprestimo(livro1, carlos, LocalDate.of(2025, 3, 1));}
+        if (luciana != null && livro2 != null) {ec.registrarEmprestimo(livro2, luciana, LocalDate.of(2025, 4, 10));}
     }
 }

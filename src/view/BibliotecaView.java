@@ -36,8 +36,8 @@ public class BibliotecaView {
             System.out.println("9. Registrar devolução");
             System.out.println("10. Listar todos empréstimos");
             System.out.println("11. Listar todos empréstimos(Ordem alfabética de títulos)");
-            System.out.println("12. Livros emprestados atualmente");
-            System.out.println("13. Usuários com devolução em atraso");
+            System.out.println("12. Livros últimos dois livros emprestados");
+            System.out.println("13. Livros devolvidos com atraso");
             System.out.println("14. Livros mais populares");
             System.out.println("0. Sair");
             System.out.print("Opção: ");
@@ -56,7 +56,7 @@ public class BibliotecaView {
                 case 9 -> registrarDevolucao(scanner, emprestimoCtrl);
                 case 10 -> emprestimoCtrl.listarEmprestimos().forEach(System.out::println);
                 case 11 -> emprestimoCtrl.listarEmprestimosOrdemAlfabetica().forEach(System.out::println);
-                case 12 -> emprestimoCtrl.listarEmprestimosAtivos().forEach(System.out::println);
+                case 12 -> emprestimoCtrl.listarUltimosDoisEmprestimosAtivos().forEach(System.out::println);
                 case 13 -> {
                             var atrasados = emprestimoCtrl.listarEmprestimosComAtraso();
                             if (atrasados.isEmpty()) System.out.println("Nenhum livro devolvido com atraso.");
