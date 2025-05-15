@@ -9,7 +9,6 @@ import model.Funcionario;
 import model.Livro;
 import model.Usuario;
 
-import java.time.Period;
 import java.util.List;
 import java.util.Scanner;
 

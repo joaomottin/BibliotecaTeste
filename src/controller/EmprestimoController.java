@@ -56,7 +56,6 @@ public class EmprestimoController {
         return "Empréstimo não encontrado ou já devolvido.";
     }
 
-
     public List<Emprestimo> listarEmprestimos() {
         return List.copyOf(emprestimos);
     }
@@ -67,18 +66,17 @@ public class EmprestimoController {
                 .collect(Collectors.toList());
     }
 
-public List<Emprestimo> listarUltimosDoisEmprestimosAtivos() {
-    List<Emprestimo> ativos = new ArrayList<>();
-    for (int i = emprestimos.size() - 1; i >= 0 && ativos.size() < 2; i--) {
-        Emprestimo e = emprestimos.get(i);
-        if (e.getDataDevolucao() == null) {
-            ativos.add(e);
+    public List<Emprestimo> listarUltimosDoisEmprestimosAtivos() {
+        List<Emprestimo> ativos = new ArrayList<>();
+        for (int i = emprestimos.size() - 1; i >= 0 && ativos.size() < 2; i--) {
+            Emprestimo e = emprestimos.get(i);
+            if (e.getDataDevolucao() == null) {
+                ativos.add(e);
+            }
         }
+        Collections.reverse(ativos);
+        return ativos;
     }
-    Collections.reverse(ativos);
-    return ativos;
-}
-
 
     public List<Emprestimo> listarEmprestimosComAtraso() {
     return emprestimos.stream()
@@ -86,8 +84,6 @@ public List<Emprestimo> listarUltimosDoisEmprestimosAtivos() {
         .sorted(Comparator.comparingInt(Emprestimo::getDiasDeAtraso).reversed())
         .collect(Collectors.toList());
     }
-
-
 
     public List<String> livrosMaisPopulares() {
         return emprestimos.stream()
