@@ -6,6 +6,7 @@ import model.PreCarga;
 import model.Usuario;
 
 import java.time.LocalDate;
+import java.time.Period;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -45,11 +46,16 @@ public class EmprestimoController {
             if (e.getId() == emprestimoId && e.getDataDevolucao() == null) {
                 e.registrarDevolucao();
                 e.getLivro().setExemplares(e.getLivro().getExemplares() + 1);
-                return "Devolução registrada.";
-            }
+                
+                Period periodo = Period.between(e.getDataEmprestimo(), e.getDataDevolucao());
+                int diasTotais = periodo.getYears() * 365 + periodo.getMonths() * 30 + periodo.getDays();
+                
+                return "Devolução registrada. O livro ficou emprestado por " + diasTotais + " dias.";
+                }
         }
         return "Empréstimo não encontrado ou já devolvido.";
     }
+
 
     public List<Emprestimo> listarEmprestimos() {
         return List.copyOf(emprestimos);
@@ -71,18 +77,19 @@ public class EmprestimoController {
         return ativos;
     }
 
-    public List<Usuario> listarUsuariosComAtraso(int diasLimite) {
-        List<Usuario> atrasados = new ArrayList<>();
-        LocalDate hoje = LocalDate.now();
-        for (Emprestimo e : emprestimos) {
-            if (e.getDataDevolucao() == null &&
-                e.getDataDevolucaoPrevista().isBefore(hoje.minusDays(diasLimite))) {
-                Usuario u = e.getUsuario();
-                if (!atrasados.contains(u)) atrasados.add(u);
-            }
-        }
-        return atrasados;
+    public List<Emprestimo> listarEmprestimosComAtraso() {
+        return emprestimos.stream()
+            .filter(e -> e.getDataDevolucao() != null && e.getDataDevolucao().isAfter(e.getDataDevolucaoPrevista()))
+            .sorted((e1, e2) -> {
+                Period atraso1 = Period.between(e1.getDataDevolucaoPrevista(), e1.getDataDevolucao());
+                Period atraso2 = Period.between(e2.getDataDevolucaoPrevista(), e2.getDataDevolucao());
+                int dias1 = atraso1.getYears() * 365 + atraso1.getMonths() * 30 + atraso1.getDays();
+                int dias2 = atraso2.getYears() * 365 + atraso2.getMonths() * 30 + atraso2.getDays();
+                return Integer.compare(dias2, dias1);
+            })
+            .collect(Collectors.toList());
     }
+
 
     public List<Map.Entry<Livro, Integer>> livrosMaisPopulares() {
         Map<Livro, Integer> contagem = new HashMap<>();

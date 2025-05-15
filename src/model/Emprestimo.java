@@ -11,12 +11,10 @@ public class Emprestimo {
     private final LocalDate dataDevolucaoPrevista;
     private LocalDate dataDevolucao;
 
-    // Construtor principal: usa data atual
     public Emprestimo(Livro livro, Usuario usuario) {
         this(livro, usuario, LocalDate.now());
     }
 
-    // Construtor de teste: recebe dataEmprestimo customizada
     public Emprestimo(Livro livro, Usuario usuario, LocalDate dataEmprestimo) {
         this.id = contador++;
         this.livro = livro;

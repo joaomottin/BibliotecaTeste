@@ -9,6 +9,7 @@ import model.Funcionario;
 import model.Livro;
 import model.Usuario;
 
+import java.time.Period;
 import java.util.List;
 import java.util.Scanner;
 
@@ -34,7 +35,7 @@ public class BibliotecaView {
             System.out.println("8. Registrar empréstimo");
             System.out.println("9. Registrar devolução");
             System.out.println("10. Listar todos empréstimos");
-            System.out.println("11. Listar todos empréstimos(Ordem alfabética)");
+            System.out.println("11. Listar todos empréstimos(Ordem alfabética de títulos)");
             System.out.println("12. Livros emprestados atualmente");
             System.out.println("13. Usuários com devolução em atraso");
             System.out.println("14. Livros mais populares");
@@ -57,10 +58,20 @@ public class BibliotecaView {
                 case 11 -> emprestimoCtrl.listarEmprestimosOrdemAlfabetica().forEach(System.out::println);
                 case 12 -> emprestimoCtrl.listarEmprestimosAtivos().forEach(System.out::println);
                 case 13 -> {
-                    var atrasados = emprestimoCtrl.listarUsuariosComAtraso(7);
-                    if (atrasados.isEmpty()) System.out.println("Nenhum usuário com atraso.");
-                    else atrasados.forEach(System.out::println);
-                }
+                            var atrasados = emprestimoCtrl.listarEmprestimosComAtraso();
+                            if (atrasados.isEmpty()) System.out.println("Nenhum livro devolvido com atraso.");
+                            else {
+                                System.out.println("Livros devolvidos com atraso (maior para menor):");
+                                atrasados.forEach(e -> {
+                                    var atraso = Period.between(e.getDataDevolucaoPrevista(), e.getDataDevolucao());
+                                    int dias = atraso.getYears() * 365 + atraso.getMonths() * 30 + atraso.getDays();
+                                    System.out.printf("%s | %s | Atraso: %d dias%n",
+                                        e.getLivro().getTitulo(), e.getUsuario().getNome(), dias);
+                                });
+                            }
+                            }   
+
+
                 case 14 -> {
                     var populares = emprestimoCtrl.livrosMaisPopulares();
                     if (populares.isEmpty()) System.out.println("Nenhum empréstimo registrado.");
