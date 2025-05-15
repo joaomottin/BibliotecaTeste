@@ -57,27 +57,22 @@ public class BibliotecaView {
                 case 10 -> emprestimoCtrl.listarEmprestimos().forEach(System.out::println);
                 case 11 -> emprestimoCtrl.listarEmprestimosOrdemAlfabetica().forEach(System.out::println);
                 case 12 -> emprestimoCtrl.listarUltimosDoisEmprestimosAtivos().forEach(System.out::println);
-                case 13 -> {
-                            var atrasados = emprestimoCtrl.listarEmprestimosComAtraso();
-                            if (atrasados.isEmpty()) System.out.println("Nenhum livro devolvido com atraso.");
-                            else {
-                                System.out.println("Livros devolvidos com atraso (maior para menor):");
-                                atrasados.forEach(e -> {
-                                    var atraso = Period.between(e.getDataDevolucaoPrevista(), e.getDataDevolucao());
-                                    int dias = atraso.getYears() * 365 + atraso.getMonths() * 30 + atraso.getDays();
-                                    System.out.printf("%s | %s | Atraso: %d dias%n",
-                                        e.getLivro().getTitulo(), e.getUsuario().getNome(), dias);
-                                });
+                case 13 -> {var atrasados = emprestimoCtrl.listarEmprestimosComAtraso();
+                                if (atrasados.isEmpty()) System.out.println("Nenhum livro devolvido com atraso.");
+                                else {
+                                    System.out.println("Livros devolvidos com atraso (maior para menor):");
+                                    atrasados.forEach(e ->
+                                        System.out.printf("%s | %s | Atraso: %d dias%n",
+                                            e.getLivro().getTitulo(), e.getUsuario().getNome(), e.getDiasDeAtraso())
+                                    );
+                                }
                             }
-                            }   
+ 
 
 
-                case 14 -> {
-                    var populares = emprestimoCtrl.livrosMaisPopulares();
+                case 14 -> {var populares = emprestimoCtrl.livrosMaisPopulares();
                     if (populares.isEmpty()) System.out.println("Nenhum empréstimo registrado.");
-                    else populares.forEach(e ->
-                        System.out.printf("%s -> %d empréstimos\n", e.getKey().getTitulo(), e.getValue()));
-                }
+                    else populares.forEach(System.out::println);}
                 case 0 -> System.out.println("Saindo...");
                 default -> System.out.println("Opção inválida.");
             }

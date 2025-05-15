@@ -81,27 +81,20 @@ public List<Emprestimo> listarUltimosDoisEmprestimosAtivos() {
 
 
     public List<Emprestimo> listarEmprestimosComAtraso() {
-        return emprestimos.stream()
-            .filter(e -> e.getDataDevolucao() != null && e.getDataDevolucao().isAfter(e.getDataDevolucaoPrevista()))
-            .sorted((e1, e2) -> {
-                Period atraso1 = Period.between(e1.getDataDevolucaoPrevista(), e1.getDataDevolucao());
-                Period atraso2 = Period.between(e2.getDataDevolucaoPrevista(), e2.getDataDevolucao());
-                int dias1 = atraso1.getYears() * 365 + atraso1.getMonths() * 30 + atraso1.getDays();
-                int dias2 = atraso2.getYears() * 365 + atraso2.getMonths() * 30 + atraso2.getDays();
-                return Integer.compare(dias2, dias1);
-            })
-            .collect(Collectors.toList());
+    return emprestimos.stream()
+        .filter(e -> e.getDiasDeAtraso() > 0)
+        .sorted(Comparator.comparingInt(Emprestimo::getDiasDeAtraso).reversed())
+        .collect(Collectors.toList());
     }
 
 
-    public List<Map.Entry<Livro, Integer>> livrosMaisPopulares() {
-        Map<Livro, Integer> contagem = new HashMap<>();
-        for (Emprestimo e : emprestimos) {
-            Livro livro = e.getLivro();
-            contagem.merge(livro, 1, Integer::sum);
-        }
-        List<Map.Entry<Livro, Integer>> lista = new ArrayList<>(contagem.entrySet());
-        lista.sort((a, b) -> b.getValue().compareTo(a.getValue()));
-        return lista;
+
+    public List<String> livrosMaisPopulares() {
+        return emprestimos.stream()
+            .collect(Collectors.groupingBy(e -> e.getLivro().getTitulo(), Collectors.counting()))
+            .entrySet().stream()
+            .sorted(Map.Entry.<String, Long>comparingByValue().reversed())
+            .map(e -> e.getKey() + " -> " + e.getValue() + " empréstimo (s)")
+            .toList();
     }
 }

@@ -1,6 +1,7 @@
 package model;
 
 import java.time.LocalDate;
+import java.time.Period;
 
 public class Emprestimo {
     private static int contador = 1;
@@ -34,6 +35,13 @@ public class Emprestimo {
     public void registrarDevolucao() {
         this.dataDevolucao = LocalDate.now();
     }
+
+    public int getDiasDeAtraso() {
+    if (dataDevolucao == null || !dataDevolucao.isAfter(dataDevolucaoPrevista)) return 0;
+    Period atraso = Period.between(dataDevolucaoPrevista, dataDevolucao);
+    return atraso.getYears() * 365 + atraso.getMonths() * 30 + atraso.getDays();
+    }
+
 
     @Override
     public String toString() {
